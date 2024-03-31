@@ -34,7 +34,7 @@ exports.get_users = get_users;
 const update_users = async function(users) {
   try {
     await writeFile(passwd_file, JSON.stringify(users), 'utf8');
-    await chmod(passwd_file, 0600);
+    await chmod(passwd_file, 0o600);
 
   } catch (err) {
     throw err;
@@ -51,9 +51,9 @@ exports.users_list = async function(req, res) {
 
   try {
     const users = await get_users();
-    res.render('users', { title: 'Admin users', navigate: navigate, message: 'List of users with admin priviledges', users: users });
+    res.render('users', { title: '管理员用户', navigate: navigate, message: 'List of users with admin priviledges', users: users });
   } catch (err) {
-    res.render('users', { title: 'Admin users', navigate: navigate, message: 'Error', users: null, error: 'Error returning list of users: ' + err });
+    res.render('users', { title: '管理员用户', navigate: navigate, message: 'Error', users: null, error: 'Error returning list of users: ' + err });
   }
 }
 
@@ -69,7 +69,7 @@ exports.password_get = async function(req, res) {
       password1: null,
       password2: null
     };
-  res.render('password', { title: 'Set password', navigate: navigate, user: user, readonly: true, message: '' });
+  res.render('password', { title: '设置密码', navigate: navigate, user: user, readonly: true, message: '' });
 }
 
 exports.password_post = async function(req, res) {
@@ -99,7 +99,7 @@ exports.password_post = async function(req, res) {
         password2: req.body.password2
       };
     const message = 'Please check errors below';
-    res.render('password', { title: 'Set password', navigate: navigate, user: user, readonly: true, message: message, errors: errors });
+    res.render('password', { title: '设置密码', navigate: navigate, user: user, readonly: true, message: message, errors: errors });
   } else {
     let pass_set = true;
     if (req.body.pass_set === 'check') pass_set = false;
@@ -123,8 +123,8 @@ exports.password_post = async function(req, res) {
 
     users = await update_users(users);
 
-    const message = 'Successfully set password for ' + req.body.username;
-    res.render('password', { title: 'Set password', navigate: navigate, user: user, readonly: true, message: message });
+    const message = `用户 ${req.body.username} 密码设置成功`;
+    res.render('password', { title: '设置密码', navigate: navigate, user: user, readonly: true, message: message });
   }
 }
 
@@ -141,7 +141,7 @@ exports.user_create_get = async function(req, res) {
       password2: null
     };
 
-  res.render('password', { title: 'Create new admin user', navigate: navigate, user: user, readonly: false});
+  res.render('password', { title: '创建新的管理用户', navigate: navigate, user: user, readonly: false});
 }
 
 exports.user_create_post = async function(req, res) {
@@ -168,7 +168,7 @@ exports.user_delete = async function(req, res) {
   const user = users[req.params.name];
 
   if (user && (req.session.user.name === user.name)) {
-    res.render('user_delete', { title: 'Delete user', navigate: navigate, user: user, self_delete: true });
+    res.render('user_delete', { title: '删除用户', navigate: navigate, user: user, self_delete: true });
   }
 
   if (req.body.delete === 'delete') {
@@ -176,16 +176,15 @@ exports.user_delete = async function(req, res) {
       const deleted_user = { name: user.name };
       delete users[user.name];
       users = await update_users(users);
-      res.render('user_delete', { title: 'Deleted user', navigate: navigate, user: deleted_user, deleted: true });
+      res.render('user_delete', { title: '删除的用户', navigate: navigate, user: deleted_user, deleted: true });
     } else {
-      res.render('user_delete', { title: 'Delete user', navigate: navigate, user: null });
+      res.render('user_delete', { title: '删除用户', navigate: navigate, user: null });
     }
   } else {
     if (user) {
-      res.render('user_delete', { title: 'Delete user', navigate: navigate, user: user });
+      res.render('user_delete', { title: '删除用户', navigate: navigate, user: user });
     } else {
-      res.render('user_delete', { title: 'Delete user', navigate: navigate, user: null });
+      res.render('user_delete', { title: '删除用户', navigate: navigate, user: null });
     }
   }
 }
-
